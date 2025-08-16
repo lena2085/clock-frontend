@@ -69,6 +69,31 @@ export default function Home() {
   } else {
     alert("❌ SOS canceled.");
   }
+
+  if (!contact?.number) {
+    toast.error("No valid contact number saved for this action");
+    return;
+  }
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const locationText = `⚠ SOS ALERT ⚠\nI need help!\nMy location: https://maps.google.com/?q=${latitude},${longitude}`;
+
+        // open WhatsApp chat for the matched contact
+        window.open(
+          `https://wa.me/${contact.number}?text=${encodeURIComponent(locationText)}`,
+          "_blank"
+        );
+      },
+      () => {
+        toast.error("Could not fetch location");
+      }
+    );
+  } else {
+    toast.error("Geolocation is not supported on this device");
+  }
 };
 
 
